@@ -2,15 +2,41 @@ import getpass
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
-from langgraph.checkpoint.memory import InMemorySaver  
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain_google_genai import ChatGoogleGenerativeAI
+from pydantic import BaseModel, Field
+
+
+class Overview(BaseModel):
+    """Overview of the game"""
+
+    setting: str = Field(
+        description="Description of an imaginative game setting in a few words like ancient Greece"
+    )
+    beginning: str = Field(
+        description="Description of the location where the player starts in 2-3 sentences"
+    )
+    goal: str = Field(
+        description="Description of the goal the player must reach to succeed in the game"
+    )
+
 
 load_dotenv()
 if "GOOGLE_API_KEY" not in os.environ:
     os.environ["GOOGLE_API_KEY"] = getpass.getpass("Enter your Google AI API key: ")
-    
+
+model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+structured_llm = model.with_structured_output(Overview)
+
+overview_response = structured_llm.invoke(
+    "Describe the setting, beginning, and goal for a random role-playing game."
+)
+
+print("Game overview Response:", overview_response)
+
 agent = create_agent(
-    model="google_genai:gemini-2.5-flash-lite",
-    system_prompt="""
+    model="google_genai:gemini-2.5-flash",
+    system_prompt=f"""
     ## ROLE
 
     You are the gamemaster for an immersive role-playing game. 
@@ -32,32 +58,39 @@ agent = create_agent(
     ## RESPONSE FORMAT
 
     Always respond in the following JSON format:
-    {
+    {{
         "outcome": "<description of the outcome of the action in 3-5 sentences>",
         "quests": [<list of current quests the player is undertaking>],
         "inventory": ["<list of all items the player is carrying>"],
         "world": "<detailed description of the current state of the whole game world>",
-    }
+    }}
 
     ## Game Setting
     
-    Post-Apocalyptic Cyberpunk Wasteland
+    {overview_response.setting}
 
-    ## Game Start
+    ## Game Beginning
     
-    You awaken in a dusty, neon-lit maintenance bay beneath the towering, derelict husk of 'MegaCorp Tower 7'. Wires hang like dead vines, and the air smells of ozone and stale synth-rations. Your only possessions are a flickering datapad and a rusty multi-tool.
+    {overview_response.beginning}
 
     ## Game Goal
     
-    Locate the legendary 'Core Seed,' a rumored piece of pre-Collapse technology capable of rebooting the city's environmental systems, and deliver it to the last functioning hydroponics dome on the surface before the next major dust storm hits.
+    {overview_response.goal}
     """,
     checkpointer=InMemorySaver(),
 )
 
 while True:
     r = agent.invoke(
-        {"messages": [{"role": "user", "content": input("Enter an action of your character: ")}]},
-        {"configurable": {"thread_id": "1"}},  
+        {
+            "messages": [
+                {
+                    "role": "user",
+                    "content": input("Enter an action of your character: "),
+                }
+            ]
+        },
+        {"configurable": {"thread_id": "1"}},
     )
 
     print(r["messages"][-1].content)
