@@ -1,8 +1,13 @@
-import Image from "next/image";
-import React from "react";
-import { text } from "stream/consumers";
+'use client';
 
 export default function Home() {
+  async function createGame(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const response = await fetch("http://localhost:8000/start-game", {
+      method: "POST",
+    });
+  }
+
   const messages = [
     { role: "system", text: "You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here." },
     { role: "user", text: "I open the mailbox" },
@@ -19,7 +24,7 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto">
         {messageViews}
       </div>
-      <form className="flex">
+      <form className="flex" onSubmit={createGame}>
         <textarea
           className="flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden border border-gray-400 rounded-md p-4 mr-4"
           placeholder="Describe an action of your character..."
