@@ -3,151 +3,60 @@
 import getpass
 import os
 import secrets
+from typing import Annotated
 from dotenv import load_dotenv
-from langchain.agents import create_agent
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.graph.state import CompiledStateGraph
-from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException, Header
+from app import create_app
+from gamemaster_system_prompt import get_gamemaster_system_prompt
+from session_store import get_session, save_session
+from game_overview_agent import invoke_game_overview_agent
+from gamemaster_agent import invoke_gamemaster_agent
 
-app = FastAPI()
-
-origins = [
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-agents: dict[str, CompiledStateGraph] = {}
+app = create_app()
 
 
 class PlayerAction(BaseModel):
     """An action taken by the player character."""
 
     action: str = Field(description="An action taken by the player character")
-    token: str = Field(description="The player's session token")
-
-
-class PlayerActionResult(BaseModel):
-    """The result of a player action."""
-
-    outcome: str = Field(
-        description="Description of the outcome of the action in 3-5 sentences"
-    )
-    quests: list[str] = Field(
-        description="List of current quests the player is undertaking"
-    )
-    inventory: list[str] = Field(description="List of all items the player is carrying")
-    world: str = Field(
-        description="Detailed description of the current state of the whole game world"
-    )
 
 
 @app.post("/start-game")
 async def start_game():
     """Starts a new game and returns the initial game state."""
-
-    overview_raw_response = structured_llm.invoke(
-        "Describe the setting, beginning, and goal for a random role-playing game."
-    )
-
-    overview_response = Overview.model_validate(overview_raw_response)
-
-    print("Game overview Response:", overview_response)
+    overview = invoke_game_overview_agent()
     token = secrets.token_urlsafe(32)
-
-    agents[token] = create_agent(
-        model="google_genai:gemini-2.5-flash",
-        system_prompt=f"""
-        ## ROLE
-
-        You are the gamemaster for an immersive role-playing game. 
-
-        ## RULES OF INTERACTION
-        
-        In each turn the player will describe an action their character wants to take. You will describe the outcome of that action.
-
-        If the player writes anything that is not an action of their character, you will ask them to rephrase it as an action of their character.
-
-        The outcome you describe must be logical and consistent with the current state of the game world. If the action is impossible, you must describe the negative outcome. 
-
-        Focus on sight, sound, smell, and texture in your descriptions. 
-        
-        Never describe the Player's actions, emotions or speech for them. Only describe the outcome of their actions.
-
-        Always use the second person ("you") when addressing the player.
-
-        ## RESPONSE FORMAT
-
-        Always respond in the following JSON format:
-        {{
-            "outcome": "<description of the outcome of the action in 3-5 sentences>",
-            "quests": [<list of current quests the player is undertaking>],
-            "inventory": ["<list of all items the player is carrying>"],
-            "world": "<detailed description of the current state of the whole game world>",
-        }}
-
-        ## Game Setting
-
-        {overview_response.setting}
-
-        ## Game Beginning
-        
-        {overview_response.beginning}
-
-        ## Game Goal
-        
-        {overview_response.goal}
-        """,
-        checkpointer=InMemorySaver(),
+    save_session(
+        token,
+        {"overview": overview, "messages": []},
     )
-
-    return {"token": token, "overview": overview_response}
-
-
-@app.post("/user-messages")
-async def create_user_message(player_action: PlayerAction):
-    """Adds a user message to the conversation and gets a response from the agent."""
-    r = agents[player_action.token].invoke(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": player_action.action,
-                }
-            ]
-        },
-        {"configurable": {"thread_id": "1"}},
-    )
-
-    return {"message": r["messages"][-1].content}
+    return {"token": token} | overview
 
 
-class Overview(BaseModel):
-    """Overview of the game"""
+@app.post("/perform-action")
+async def perform_user_message(
+    player_action: PlayerAction, x_session_id: Annotated[str, Header()]
+):
+    """Performs a user action and returns a response from the agent."""
 
-    setting: str = Field(
-        description="Description of an imaginative game setting in a few words like ancient Greece"
-    )
-    beginning: str = Field(
-        description="Description of the location where the player starts in 2-3 sentences"
-    )
-    goal: str = Field(
-        description="Description of the goal the player must reach to succeed in the game"
-    )
+    session = get_session(x_session_id)
+
+    if session is None:
+        raise HTTPException(status_code=409, detail="Invalid x-session-id header")
+
+    messages = session["messages"]
+
+    if messages == []:
+        messages.append(get_gamemaster_system_prompt(session["overview"]))
+
+    messages = messages + [{"role": "user", "content": player_action.action}]
+    result = invoke_gamemaster_agent(messages)
+    messages = messages + [{"role": "assistant", "content": result.model_dump_json()}]
+    save_session(x_session_id, {"overview": session["overview"], "messages": messages})
+    return result
 
 
 load_dotenv()
 if "GOOGLE_API_KEY" not in os.environ:
     os.environ["GOOGLE_API_KEY"] = getpass.getpass("Enter your Google AI API key: ")
-
-model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-structured_llm = model.with_structured_output(Overview)
