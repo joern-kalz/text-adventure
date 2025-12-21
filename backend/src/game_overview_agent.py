@@ -3,7 +3,7 @@
 from typing import cast
 from pydantic import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI
-from dto import Overview
+from session import Overview
 
 
 class GameOverviewResponse(BaseModel):
