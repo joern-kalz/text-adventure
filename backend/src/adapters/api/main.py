@@ -7,11 +7,11 @@ from typing import Annotated
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from fastapi import HTTPException, Header
-from app import create_app
-from gamemaster_system_prompt import get_gamemaster_system_prompt
-from session_store import get_session, save_session
-from game_overview_agent import invoke_game_overview_agent
-from gamemaster_agent import invoke_gamemaster_agent
+from core.gamemaster_system_prompt import get_gamemaster_system_prompt
+from adapters.persistence.session_store import get_session, save_session
+from adapters.agents.game_overview_agent import invoke_game_overview_agent
+from adapters.agents.gamemaster_agent import invoke_gamemaster_agent
+from .app import create_app
 
 app = create_app()
 
