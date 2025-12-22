@@ -25,14 +25,16 @@ class PerformActionResultSuccess(BaseModel):
     world: str = Field(description="Description of the current world state")
 
 
-@router.post("/perform-action")
+@router.post(
+    "/perform-action", responses={404: {"description": "Session token not found"}}
+)
 async def post_perform_action(
     player_action: PlayerAction, x_session_token: Annotated[str, Header()]
 ):
     """Performs a user action and returns a response from the agent."""
     result = perform_action(player_action.action, x_session_token)
     if isinstance(result, PerformActionResultErrorSessionNotFound):
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=404, detail="Session token not found")
     else:
         return PerformActionResultSuccess(
             outcome=result.outcome,
