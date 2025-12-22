@@ -7,10 +7,10 @@ from src.adapters.llm.llm import invoke_llm
 from src.adapters.persistence.session_store import get_session, save_session
 from src.core.game_overview_prompt import get_game_overview_prompt
 from src.core.gamemaster_system_prompt import get_gamemaster_system_prompt
+from src.model.create_game_result import CreateGameResult
 from src.model.message import Message
 from src.model.overview import Overview
-from src.model.results import (
-    CreateGameResult,
+from src.model.perform_action_result import (
     PerformActionResult,
     PerformActionResultErrorSessionNotFound,
     PerformActionResultSuccess,

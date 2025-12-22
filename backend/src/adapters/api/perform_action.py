@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
 from src.core.game import perform_action
-from src.model.results import PerformActionResultErrorSessionNotFound
+from src.model.perform_action_result import PerformActionResultErrorSessionNotFound
 
 router = APIRouter()
 
