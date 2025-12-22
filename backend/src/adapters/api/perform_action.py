@@ -27,10 +27,10 @@ class PerformActionResultSuccess(BaseModel):
 
 @router.post("/perform-action")
 async def post_perform_action(
-    player_action: PlayerAction, x_session_id: Annotated[str, Header()]
+    player_action: PlayerAction, x_session_token: Annotated[str, Header()]
 ):
     """Performs a user action and returns a response from the agent."""
-    result = perform_action(player_action.action, x_session_id)
+    result = perform_action(player_action.action, x_session_token)
     if isinstance(result, PerformActionResultErrorSessionNotFound):
         raise HTTPException(status_code=404, detail="Session not found")
     else:

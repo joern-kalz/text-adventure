@@ -22,7 +22,7 @@ def test_perform_action_success(mocker: pytest_mock.MockerFixture):
     resp = client.post(
         "/perform-action",
         json={"action": "look around"},
-        headers={"x-session-id": start_response["token"]},
+        headers={"x-session-token": start_response["session_token"]},
     )
 
     assert resp.status_code == 200
@@ -36,7 +36,7 @@ def test_perform_action_with_invalid_session():
     resp = client.post(
         "/perform-action",
         json={"action": "look around"},
-        headers={"x-session-id": "invalid_session_id"},
+        headers={"x-session-token": "invalid_session_id"},
     )
 
     assert resp.status_code == 404

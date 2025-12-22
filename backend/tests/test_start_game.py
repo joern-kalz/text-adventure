@@ -19,4 +19,4 @@ def test_start_game_returns_overview(mocker: pytest_mock.MockerFixture):
     response = client.post("/start-game")
 
     assert response.status_code == 200
-    assert response.json() == fixture | {"token": IsStr()}
+    assert response.json() == fixture | {"session_token": IsStr()}

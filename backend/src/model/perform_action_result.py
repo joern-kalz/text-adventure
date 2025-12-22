@@ -15,7 +15,7 @@ class PerformActionResultSuccess:
 
 @dataclass
 class PerformActionResultErrorSessionNotFound:
-    """The result of performing a player action with an invalid session ID."""
+    """The result of performing a player action with an invalid session token."""
 
 
 PerformActionResult = (

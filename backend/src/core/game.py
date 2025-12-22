@@ -25,13 +25,13 @@ def start_game() -> CreateGameResult:
     token = secrets.token_urlsafe(32)
     system_prompt = get_gamemaster_system_prompt(overview)
     save_session(token, Session(overview=overview, messages=[system_prompt]))
-    return CreateGameResult(token=token, overview=overview)
+    return CreateGameResult(session_token=token, overview=overview)
 
 
-def perform_action(action: str, session_id: str) -> PerformActionResult:
+def perform_action(action: str, session_token: str) -> PerformActionResult:
     """Performs a user action and returns a response from the agent."""
 
-    session = get_session(session_id)
+    session = get_session(session_token)
 
     if session is None:
         return PerformActionResultErrorSessionNotFound()
@@ -40,7 +40,7 @@ def perform_action(action: str, session_id: str) -> PerformActionResult:
     messages.append(Message(role="user", content=action))
     result = invoke_llm(messages)
     messages.append(Message(role="assistant", content=json.dumps(result)))
-    save_session(session_id, session)
+    save_session(session_token, session)
 
     return PerformActionResultSuccess(
         outcome=result["outcome"],

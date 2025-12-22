@@ -9,5 +9,5 @@ from src.model.overview import Overview
 class CreateGameResult:
     """Result of creating a new game."""
 
-    token: str
+    session_token: str
     overview: Overview
