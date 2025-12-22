@@ -3,6 +3,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .perform_action import router as perform_action_router
+from .start_game import router as start_game_router
+
 
 def create_app() -> FastAPI:
     """Creates and configures the FastAPI application."""
@@ -20,5 +23,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.include_router(start_game_router)
+    app.include_router(perform_action_router)
 
     return app

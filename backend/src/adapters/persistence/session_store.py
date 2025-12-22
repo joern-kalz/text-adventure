@@ -1,7 +1,6 @@
 """Session persistence for text adventure game sessions."""
 
-from model.session import Session
-
+from src.model.session import Session
 
 _sessions: dict[str, Session] = {}
 

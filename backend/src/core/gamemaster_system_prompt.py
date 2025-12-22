@@ -1,6 +1,6 @@
 """Generates the system prompt for the gamemaster agent."""
 
-from model.session import Message, Overview
+from src.model.session import Message, Overview
 
 
 def get_gamemaster_system_prompt(game_overview: Overview) -> Message:
@@ -31,14 +31,31 @@ def _get_gamemaster_system_prompt_text(game_overview: Overview) -> str:
 
         Always use the second person ("you") when addressing the player.
 
-        ## Game Setting
+        ## RESPONSE FORMAT
+
+        You must adhere to the following strict rules:
+
+        1. Output **only** valid JSON.
+        2. Do not offer any explanations, headers, or conversational filler.
+        3. Do not use Markdown code blocks (e.g., do not start with ```json).
+        4. Follow this exact JSON schema:
+
+        {{
+            "outcome": "Description of the outcome of the action in 3-5 sentences",
+            "quests": ["List of current quests the player is undertaking"],
+            "inventory": ["List of all items the player is currently carrying"],
+            "world": "Detailed description of the current state of the whole game world"
+        }}
+
+        ## GAME SETTING
 
         {game_overview['setting']}
 
-        ## Game Beginning
+        ## GAME BEGINNING
         
         {game_overview['beginning']}
-        ## Game Goal
+
+        ## GAME GOAL
 
         {game_overview['goal']}
         """

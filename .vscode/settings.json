@@ -2,6 +2,12 @@
     "python.analysis.autoImportCompletions": true,
     "python.analysis.typeCheckingMode": "standard",
     "python.analysis.extraPaths": [
-        "./backend/src",
-    ]
+        "./backend",
+    ],
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.unusedImports": "explicit",
+        }
+    }
 }
