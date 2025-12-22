@@ -21,8 +21,8 @@ async def post_start_game() -> StartGameResponse:
     """Starts a new game and returns the initial game state."""
     result = start_game()
     return StartGameResponse(
-        token=result["token"],
-        setting=result["setting"],
-        beginning=result["beginning"],
-        goal=result["goal"],
+        token=result.token,
+        setting=result.overview.setting,
+        beginning=result.overview.beginning,
+        goal=result.overview.goal,
     )

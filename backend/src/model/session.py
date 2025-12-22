@@ -1,9 +1,11 @@
-"""Domain model for the text adventure game."""
+"""Domain model for the text adventure game using dataclasses."""
 
-from typing import Literal, TypedDict
+from dataclasses import dataclass, field
+from typing import Literal
 
 
-class Overview(TypedDict):
+@dataclass
+class Overview:
     """Overview of the game."""
 
     setting: str
@@ -11,15 +13,17 @@ class Overview(TypedDict):
     goal: str
 
 
-class Message(TypedDict):
+@dataclass
+class Message:
     """A message in the game."""
 
-    role: Literal["system"] | Literal["user"] | Literal["assistant"]
+    role: Literal["system", "user", "assistant"]
     content: str
 
 
-class Session(TypedDict):
+@dataclass
+class Session:
     """A game session."""
 
     overview: Overview
-    messages: list[Message]
+    messages: list[Message] = field(default_factory=list)

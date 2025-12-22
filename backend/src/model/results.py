@@ -1,31 +1,31 @@
-"""Domain model for the text adventure game."""
+"""Domain model for the text adventure game using dataclasses."""
 
-from typing import Literal, TypedDict
+from dataclasses import dataclass
+
+from src.model.session import Overview
 
 
-class CreateGameResult(TypedDict):
+@dataclass
+class CreateGameResult:
     """Result of creating a new game."""
 
     token: str
-    setting: str
-    beginning: str
-    goal: str
+    overview: Overview
 
 
-class PerformActionResultSuccess(TypedDict):
+@dataclass
+class PerformActionResultSuccess:
     """The result of performing a player action successfully."""
 
-    type: Literal["success"]
     outcome: str
     quests: list[str]
     inventory: list[str]
     world: str
 
 
-class PerformActionResultErrorSessionNotFound(TypedDict):
+@dataclass
+class PerformActionResultErrorSessionNotFound:
     """The result of performing a player action with an invalid session ID."""
-
-    type: Literal["error_session_not_found"]
 
 
 PerformActionResult = (

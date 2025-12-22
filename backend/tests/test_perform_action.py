@@ -29,7 +29,7 @@ def test_perform_action_success(mocker: pytest_mock.MockerFixture):
     assert resp.json() == fixture
 
 
-def test_perform_action_with_invalid_session(mocker: pytest_mock.MockerFixture):
+def test_perform_action_with_invalid_session():
     """Tests performing an action with an invalid session."""
     client = TestClient(create_app())
 

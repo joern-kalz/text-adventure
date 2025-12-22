@@ -6,7 +6,7 @@ from src.model.session import Message, Overview
 def get_gamemaster_system_prompt(game_overview: Overview) -> Message:
     """Generates the system prompt for the gamemaster agent."""
     text = _get_gamemaster_system_prompt_text(game_overview)
-    return {"role": "system", "content": text}
+    return Message(role="system", content=text)
 
 
 def _get_gamemaster_system_prompt_text(game_overview: Overview) -> str:
@@ -49,13 +49,13 @@ def _get_gamemaster_system_prompt_text(game_overview: Overview) -> str:
 
         ## GAME SETTING
 
-        {game_overview['setting']}
+        {game_overview.setting}
 
         ## GAME BEGINNING
         
-        {game_overview['beginning']}
+        {game_overview.beginning}
 
         ## GAME GOAL
 
-        {game_overview['goal']}
+        {game_overview.goal}
         """

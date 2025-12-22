@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
 from src.core.game import perform_action
+from src.model.results import PerformActionResultErrorSessionNotFound
 
 router = APIRouter()
 
@@ -30,13 +31,12 @@ async def post_perform_action(
 ):
     """Performs a user action and returns a response from the agent."""
     result = perform_action(player_action.action, x_session_id)
-
-    if result["type"] == "error_session_not_found":
+    if isinstance(result, PerformActionResultErrorSessionNotFound):
         raise HTTPException(status_code=404, detail="Session not found")
-    elif result["type"] == "success":
+    else:
         return PerformActionResultSuccess(
-            outcome=result["outcome"],
-            quests=result["quests"],
-            inventory=result["inventory"],
-            world=result["world"],
+            outcome=result.outcome,
+            quests=result.quests,
+            inventory=result.inventory,
+            world=result.world,
         )
