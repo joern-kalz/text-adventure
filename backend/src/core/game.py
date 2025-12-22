@@ -23,7 +23,8 @@ def start_game() -> CreateGameResult:
     overview_dict = invoke_llm(get_game_overview_prompt())
     overview = Overview(**overview_dict)
     token = secrets.token_urlsafe(32)
-    save_session(token, Session(overview=overview, messages=[]))
+    system_prompt = get_gamemaster_system_prompt(overview)
+    save_session(token, Session(overview=overview, messages=[system_prompt]))
     return CreateGameResult(token=token, overview=overview)
 
 
@@ -36,14 +37,10 @@ def perform_action(action: str, session_id: str) -> PerformActionResult:
         return PerformActionResultErrorSessionNotFound()
 
     messages = session.messages
-
-    if messages == []:
-        messages.append(get_gamemaster_system_prompt(session.overview))
-
-    messages = messages + [Message(role="user", content=action)]
+    messages.append(Message(role="user", content=action))
     result = invoke_llm(messages)
-    messages = messages + [Message(role="assistant", content=json.dumps(result))]
-    save_session(session_id, Session(overview=session.overview, messages=messages))
+    messages.append(Message(role="assistant", content=json.dumps(result)))
+    save_session(session_id, session)
 
     return PerformActionResultSuccess(
         outcome=result["outcome"],
