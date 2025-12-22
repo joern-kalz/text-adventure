@@ -1,6 +1,7 @@
 """Generates the system prompt for the gamemaster agent."""
 
-from src.model.session import Message, Overview
+from src.model.message import Message
+from src.model.overview import Overview
 
 
 def get_gamemaster_system_prompt(game_overview: Overview) -> Message:

@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from src.model.session import Overview
+from src.model.overview import Overview
 
 
 @dataclass

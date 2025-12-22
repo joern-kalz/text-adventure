@@ -5,7 +5,7 @@ from dataclasses import asdict
 from typing import cast
 
 from langchain_groq import ChatGroq
-from src.model.session import Message
+from src.model.message import Message
 
 
 def invoke_llm(prompt: str | list[Message]) -> dict:

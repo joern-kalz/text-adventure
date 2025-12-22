@@ -1,24 +1,9 @@
-"""Domain model for the text adventure game using dataclasses."""
+"""Session domain model for the text adventure game."""
 
 from dataclasses import dataclass, field
-from typing import Literal
 
-
-@dataclass
-class Overview:
-    """Overview of the game."""
-
-    setting: str
-    beginning: str
-    goal: str
-
-
-@dataclass
-class Message:
-    """A message in the game."""
-
-    role: Literal["system", "user", "assistant"]
-    content: str
+from src.model.message import Message
+from src.model.overview import Overview
 
 
 @dataclass
