@@ -8,6 +8,7 @@ from tests.mock_chatgroq import mock_chatgroq
 
 
 def test_start_game_returns_overview(mocker: pytest_mock.MockerFixture):
+    """Test starting a game returns an overview"""
     client = TestClient(create_app())
     fixture = {
         "setting": "A mysterious island",
