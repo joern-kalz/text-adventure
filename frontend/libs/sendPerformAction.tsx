@@ -1,4 +1,3 @@
-
 export interface PerformActionResponse {
     outcome: string
     quests: string[];
