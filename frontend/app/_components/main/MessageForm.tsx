@@ -8,17 +8,15 @@ interface MessageFormProps {
     onPause: () => Promise<void>;
 }
 
-type State = "waiting_for_user" | "waiting_for_server";
-
 export default function MessageForm({ onPerformAction, onPause }: MessageFormProps) {
-    const [state, setState] = useState<State>("waiting_for_user");
+    const [disabled, setDisabled] = useState(false);
     const [inputValue, setInputValue] = useState("");
 
     async function handleInput(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        setState("waiting_for_server");
+        setDisabled(true);
         await onPerformAction(inputValue);
-        setState("waiting_for_user");
+        setDisabled(false);
         setInputValue("");
     }
 
@@ -29,15 +27,15 @@ export default function MessageForm({ onPerformAction, onPause }: MessageFormPro
                 placeholder="Describe an action of your character..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                disabled={state === "waiting_for_server"}
+                disabled={disabled}
             ></input>
             <KeyButton
                 type="submit"
-                disabled={state === "waiting_for_server"}
+                disabled={disabled}
             >Enter</KeyButton>
             <KeyButton
                 type="button"
-                disabled={state === "waiting_for_server"}
+                disabled={disabled}
                 onClick={onPause}
             >Esc</KeyButton>
         </form>
