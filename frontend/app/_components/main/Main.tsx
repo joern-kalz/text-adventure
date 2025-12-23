@@ -4,7 +4,7 @@ import { Overview } from "@/app/_components/_dto/Overview";
 import { Step } from "@/app/_components/_dto/Step";
 import React, { useState } from "react";
 import KeyButton from "./KeyButton";
-import Steps from "./Steps";
+import Messages from "./Messages";
 
 interface MainProps {
     overview: Overview;
@@ -29,7 +29,7 @@ export default function Main({ overview, steps, onPerformAction, onPause }: Main
 
     return (
         <div className="flex flex-col h-full w-full">
-            <Steps overview={overview} steps={steps} />
+            <Messages overview={overview} steps={steps} />
             <form className="flex" onSubmit={handleInput}>
                 <input
                     className="flex-1 focus:outline-none focus:ring-2 focus:ring-gray-100 resize-none overflow-hidden border border-gray-400 rounded-md p-4"
