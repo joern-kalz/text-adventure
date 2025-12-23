@@ -10,7 +10,7 @@ def get_game_overview_prompt() -> str:
         Generate an overview of a text adventure game including:
 
         1. An imaginative game setting in a few words. Create something similar, but not identical to the following examples: 'Ancient Athene during the reforms of Solon', 'Mediaeval fantasy world with elves, trolls, and a dragon', 'Fairy tale world with a giant, a fairy godmother, and a wolf', 'Cyberpunk city on Mars after the fall of the empire'
-        2. A description of the location where the player starts in 2-3 sentences
+        2. A description of the location where the player starts in 2-3 sentences. This description must be understandable for the player without knowing the setting or goal.
         3. A precise description of a single goal the player must reach to succeed in the game.
         
         Never describe the Player's actions, emotions or speech for them.
