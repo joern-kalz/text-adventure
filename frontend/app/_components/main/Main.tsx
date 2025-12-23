@@ -4,6 +4,7 @@ import { Overview } from "@/app/_components/_dto/Overview";
 import { Step } from "@/app/_components/_dto/Step";
 import React, { useState } from "react";
 import KeyButton from "./KeyButton";
+import Steps from "./Steps";
 
 interface MainProps {
     overview: Overview;
@@ -26,25 +27,9 @@ export default function Main({ overview, steps, onPerformAction, onPause }: Main
         setInputValue("");
     }
 
-    const stepViews = steps.map((step, index) => (
-        <React.Fragment key={index}>
-            <div key={index * 2} className="mb-4">
-                &gt; {step.action}
-            </div>
-            {step.result && <div key={index * 2 + 1} className="mb-4">
-                {step.result.outcome}
-            </div>}
-        </React.Fragment>
-    ));
-
     return (
         <div className="flex flex-col h-full w-full">
-            <div className="flex-1 overflow-y-auto">
-                <div className="mb-4">
-                    {overview.beginning}
-                </div>
-                {stepViews}
-            </div>
+            <Steps overview={overview} steps={steps} />
             <form className="flex" onSubmit={handleInput}>
                 <input
                     className="flex-1 focus:outline-none focus:ring-2 focus:ring-gray-100 resize-none overflow-hidden border border-gray-400 rounded-md p-4"
