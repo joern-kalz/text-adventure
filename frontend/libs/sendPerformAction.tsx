@@ -6,14 +6,15 @@ export interface PerformActionResponse {
     world: string;
 }
 
-export async function sendPerformAction(action: string, sessionId: string): Promise<PerformActionResponse> {
+export async function sendPerformAction(action: string, session_token: string): Promise<PerformActionResponse> {
     const response = await fetch("http://localhost:8000/perform-action", {
         method: "POST",
         body: JSON.stringify({ action }),
         headers: {
-            "x-session-id": sessionId,
+            "x-session-token": session_token,
+            "Content-Type": "application/json"
         },
     });
     const body = await response.json();
-    return body.message;
+    return body;
 }

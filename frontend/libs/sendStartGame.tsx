@@ -1,5 +1,5 @@
 export interface StartGameResponse {
-    token: string;
+    session_token: string;
     setting: string;
     beginning: string;
     goal: string;
