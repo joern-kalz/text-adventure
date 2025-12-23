@@ -11,7 +11,7 @@ import Menu from "./menu/Menu";
 export default function Game() {
   const [overview, setOverview] = useState<Overview>();
   const [steps, setSteps] = useState<Step[]>([]);
-  const [paused, setPaused] = useState<boolean>(true);
+  const [paused, setPaused] = useState<boolean>(false);
 
   async function startGame() {
     setSteps([]);
@@ -29,16 +29,17 @@ export default function Game() {
     setPaused(false);
   }
 
-  async function performAction(action: string, token: string) {
+  async function performAction(action: string, session_token: string) {
     const oldSteps = steps;
     setSteps([...oldSteps, { action }]);
-    const response = await sendPerformAction(action, token);
+    const response = await sendPerformAction(action, session_token);
     setSteps([...oldSteps, { action, result: response }]);
   }
 
   if (!overview || paused) {
     return <Menu onStartGame={startGame} onResumeGame={resumeGame} canResumeGame={paused} />
   } else {
-    return <Main overview={overview} steps={steps} onPerformAction={(action) => performAction(action, overview.token)} />
+    const onPerformAction = (action: string) => performAction(action, overview.session_token);
+    return <Main overview={overview} steps={steps} onPerformAction={onPerformAction} onPause={pauseGame} />
   }
 }
