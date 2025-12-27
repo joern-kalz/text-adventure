@@ -15,7 +15,6 @@ describe("sendPerformAction", () => {
             world: "Forest",
         };
 
-        // Mock the fetch response
         (global.fetch as jest.Mock).mockResolvedValue({
             json: jest.fn().mockResolvedValue(mockResponseData),
         });

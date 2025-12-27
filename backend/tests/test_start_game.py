@@ -15,9 +15,10 @@ def test_start_game_returns_overview(mocker: pytest_mock.MockerFixture):
         "beginning": "You wake on a beach",
         "goal": "Escape the island",
     }
-    mock_chatgroq(mocker, fixture)
+    mock = mock_chatgroq(mocker, fixture)
 
     response = client.post("/start-game")
 
     assert response.status_code == 200
     assert response.json() == fixture | {"session_token": IsStr()}
+    mock.return_value.invoke.assert_called_once_with(IsStr())

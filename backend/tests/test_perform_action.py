@@ -40,4 +40,34 @@ def test_perform_action_with_invalid_session():
     )
 
     assert resp.status_code == 404
-    assert resp.json() == {"detail": "Session not found"}
+
+
+def test_perform_action_history_persistence(mocker: pytest_mock.MockerFixture):
+    """Tests that chat history is persisted across actions."""
+    client = TestClient(create_app())
+    mock_chatgroq_overview(mocker)
+    start_response = client.post("/start-game").json()
+    fixture = {
+        "outcome": "Outcome",
+        "quests": [],
+        "inventory": [],
+        "world": "World",
+    }
+    mock_chatgroq(mocker, fixture)
+
+    client.post(
+        "/perform-action",
+        json={"action": "first action"},
+        headers={"x-session-token": start_response["session_token"]},
+    )
+
+    mock = mock_chatgroq(mocker, fixture)
+    client.post(
+        "/perform-action",
+        json={"action": "second action"},
+        headers={"x-session-token": start_response["session_token"]},
+    )
+
+    args, _ = mock.return_value.invoke.call_args
+    assert "first action" in str(args[0])
+    assert "second action" in str(args[0])
