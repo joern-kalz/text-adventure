@@ -2,7 +2,7 @@ import os
 
 from aws_cdk import CfnOutput, Duration, Stack
 from aws_cdk import aws_lambda as lambda_
-from aws_cdk.aws_lambda_python_alpha import PythonFunction
+from aws_cdk.aws_lambda_python_alpha import PythonFunction, BundlingOptions
 from constructs import Construct
 
 
@@ -22,6 +22,16 @@ class TextAdventureLambdaStack(Stack):
             },
             timeout=Duration.seconds(30),
             memory_size=512,
+            bundling=BundlingOptions(
+                asset_excludes=[
+                    ".venv",
+                    "test/",
+                    ".gitignore",
+                    ".env",
+                    "pyproject.toml",
+                    "uv.lock",
+                ]
+            ),
         )
 
         fn_url = backend_lambda.add_function_url(
