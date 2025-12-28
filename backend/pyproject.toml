@@ -1,7 +1,7 @@
 [project]
 name = "llm-game"
 version = "0.1.0"
-description = "Add your description here"
+description = "Backend for an AI-powered text adventure game"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
