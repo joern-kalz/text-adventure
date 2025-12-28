@@ -30,7 +30,7 @@ You will also need an API from Groq. Create it [here](https://console.groq.com/)
 The backend handles the AI interaction and game state.
 
 ```bash
-cd backend
+cd backend/app
 uv sync
 uv run fastapi dev src/main.py
 ```
@@ -42,7 +42,7 @@ When the server starts, it will prompt you in the terminal to enter your Groq AP
 The frontend provides a user interface with terminal styling.
 
 ```bash
-cd frontend
+cd frontend/app
 pnpm install
 pnpm run dev
 ```
