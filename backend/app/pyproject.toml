@@ -3,10 +3,11 @@ name = "llm-game"
 version = "0.1.0"
 description = "Backend for an AI-powered text adventure game"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard-no-fastapi-cloud-cli]>=0.124.4",
     "langchain-groq>=1.1.1",
+    "mangum>=0.17.0",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
 ]

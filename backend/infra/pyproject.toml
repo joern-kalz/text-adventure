@@ -1,0 +1,10 @@
+[project]
+name = "text-adventure-backend-infra"
+version = "0.1.0"
+description = "Infrastructure for the backend of the text adventure"
+requires-python = ">=3.12"
+dependencies = [
+    "aws-cdk-lib>=2.100.0",
+    "aws-cdk.aws-lambda-python-alpha>=2.100.0a0",
+    "constructs>=10.0.0",
+]
