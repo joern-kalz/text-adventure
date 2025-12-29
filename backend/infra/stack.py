@@ -1,6 +1,4 @@
-import os
-
-from aws_cdk import CfnOutput, Duration, Stack
+from aws_cdk import CfnOutput, Duration, Stack, aws_secretsmanager as secretsmanager
 from aws_cdk import aws_lambda as lambda_
 from aws_cdk.aws_lambda_python_alpha import PythonFunction, BundlingOptions
 from constructs import Construct
@@ -10,15 +8,17 @@ class TextAdventureLambdaStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        groq_secret = secretsmanager.Secret(self, "GroqApiKeySecret")
+
         backend_lambda = PythonFunction(
             self,
             "GameBackendFunction",
             entry="../app",
-            index="lambda_handler.py",
+            index="src/lambda_handler.py",
             handler="handler",
             runtime=lambda_.Runtime.PYTHON_3_12,
             environment={
-                "GROQ_API_KEY": os.getenv("GROQ_API_KEY", ""),
+                "GROQ_SECRET_NAME": groq_secret.secret_name,
             },
             timeout=Duration.seconds(30),
             memory_size=512,
@@ -33,6 +33,8 @@ class TextAdventureLambdaStack(Stack):
                 ]
             ),
         )
+
+        groq_secret.grant_read(backend_lambda)
 
         fn_url = backend_lambda.add_function_url(
             auth_type=lambda_.FunctionUrlAuthType.NONE,
