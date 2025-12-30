@@ -1,6 +1,7 @@
 import { Overview } from "@/app/_components/_dto/Overview";
 import { Step } from "@/app/_components/_dto/Step";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRef } from 'react';
 
 interface MessagesProps {
     overview: Overview;
@@ -8,6 +9,14 @@ interface MessagesProps {
 }
 
 export default function Messages({ overview, steps }: MessagesProps) {
+    const messagesList = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (messagesList.current) {
+            messagesList.current.scrollTop = messagesList.current.scrollHeight;
+        }
+    }, [steps]);
+
     const stepViews = steps.map((step, index) => (
         <React.Fragment key={index}>
             <div className="mb-4">
@@ -20,7 +29,7 @@ export default function Messages({ overview, steps }: MessagesProps) {
     ));
 
     return (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto" ref={messagesList}>
             <div className="mb-4">
                 {overview.beginning}
             </div>
