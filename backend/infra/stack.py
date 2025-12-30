@@ -1,4 +1,4 @@
-from aws_cdk import CfnOutput, Duration, Stack, aws_secretsmanager as secretsmanager
+from aws_cdk import CfnOutput, Duration, Stack, aws_secretsmanager as secretsmanager, aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as lambda_
 from aws_cdk.aws_lambda_python_alpha import PythonFunction, BundlingOptions
 from constructs import Construct
@@ -10,6 +10,15 @@ class TextAdventureLambdaStack(Stack):
 
         groq_secret = secretsmanager.Secret(self, "GroqApiKeySecret")
 
+        sessions_table = dynamodb.Table(
+            self,
+            "Sessions",
+            partition_key=dynamodb.Attribute(
+                name="session_token", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+        )
+
         backend_lambda = PythonFunction(
             self,
             "GameBackendFunction",
@@ -19,6 +28,7 @@ class TextAdventureLambdaStack(Stack):
             runtime=lambda_.Runtime.PYTHON_3_12,
             environment={
                 "GROQ_SECRET_NAME": groq_secret.secret_name,
+                "SESSIONS_TABLE_NAME": sessions_table.table_name,
             },
             timeout=Duration.seconds(30),
             memory_size=512,
@@ -35,6 +45,7 @@ class TextAdventureLambdaStack(Stack):
         )
 
         groq_secret.grant_read(backend_lambda)
+        sessions_table.grant_read_write_data(backend_lambda)
 
         fn_url = backend_lambda.add_function_url(
             auth_type=lambda_.FunctionUrlAuthType.NONE,
