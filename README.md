@@ -15,6 +15,11 @@ This project explores the capabilities of Generative AI in interactive storytell
 
 ![Game Screenshot](./docs/screenshot.png)
 
+## 🛠️ Tech Stack
+
+*   **Backend:** Python, FastAPI, `uv`, Langchain, Pytest
+*   **Frontend:** Next.js, Tailwind CSS, TypeScript, `pnpm`
+
 ## 🚀 Getting Started
 
 Follow these instructions to set up the project locally for development.
@@ -49,10 +54,13 @@ pnpm run dev
 
 Open your browser and visit [http://localhost:3000/](http://localhost:3000/).
 
-## 🛠️ Tech Stack
+## Deployment to an AWS account
 
-*   **Backend:** Python, FastAPI, `uv`, Langchain, Pytest
-*   **Frontend:** Next.js, Tailwind CSS, TypeScript, `pnpm`
+Deploy the game to an AWS account with
+
+- [Steps for backend deployment](backend/infra/README.md)
+- Steps for frontend deployment
+
 
 ## 📄 License
 
