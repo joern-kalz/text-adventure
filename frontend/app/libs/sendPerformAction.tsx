@@ -1,3 +1,5 @@
+import { API_URL } from "./config";
+
 export interface PerformActionResponse {
     outcome: string
     quests: string[];
@@ -5,8 +7,9 @@ export interface PerformActionResponse {
     world: string;
 }
 
+
 export async function sendPerformAction(action: string, session_token: string): Promise<PerformActionResponse> {
-    const response = await fetch("http://localhost:8000/perform-action", {
+    const response = await fetch(`${API_URL}/perform-action`, {
         method: "POST",
         body: JSON.stringify({ action }),
         headers: {

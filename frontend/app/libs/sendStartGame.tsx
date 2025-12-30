@@ -1,3 +1,5 @@
+import { API_URL } from "./config";
+
 export interface StartGameResponse {
     session_token: string;
     setting: string;
@@ -5,8 +7,9 @@ export interface StartGameResponse {
     goal: string;
 }
 
+
 export async function sendStartGame(): Promise<StartGameResponse> {
-    const response = await fetch("http://localhost:8000/start-game", {
+    const response = await fetch(`${API_URL}/start-game`, {
         method: "POST",
     });
     const body = await response.json();
