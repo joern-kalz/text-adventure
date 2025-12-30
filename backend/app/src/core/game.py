@@ -4,7 +4,7 @@ import json
 import secrets
 
 from src.adapters.llm.llm import invoke_llm
-from src.adapters.persistence.session_store import get_session, save_session
+from src.adapters.persistence.session_store import read_session, write_session
 from src.core.game_overview_prompt import get_game_overview_prompt
 from src.core.gamemaster_system_prompt import get_gamemaster_system_prompt
 from src.model.create_game_result import CreateGameResult
@@ -24,14 +24,14 @@ def start_game() -> CreateGameResult:
     overview = Overview(**overview_dict)
     token = secrets.token_urlsafe(32)
     system_prompt = get_gamemaster_system_prompt(overview)
-    save_session(token, Session(overview=overview, messages=[system_prompt]))
+    write_session(token, Session(overview=overview, messages=[system_prompt]))
     return CreateGameResult(session_token=token, overview=overview)
 
 
 def perform_action(action: str, session_token: str) -> PerformActionResult:
     """Performs a user action and returns a response from the agent."""
 
-    session = get_session(session_token)
+    session = read_session(session_token)
 
     if session is None:
         return PerformActionResultErrorSessionNotFound()
@@ -40,7 +40,7 @@ def perform_action(action: str, session_token: str) -> PerformActionResult:
     messages.append(Message(role="user", content=action))
     result = invoke_llm(messages)
     messages.append(Message(role="assistant", content=json.dumps(result)))
-    save_session(session_token, session)
+    write_session(session_token, session)
 
     return PerformActionResultSuccess(
         outcome=result["outcome"],
