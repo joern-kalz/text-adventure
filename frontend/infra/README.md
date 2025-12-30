@@ -1,20 +1,18 @@
 # AWS Deployment Guide
 
-This document outlines the steps to deploy the backend to AWS.
+This document outlines the steps to deploy the frontend to AWS.
 
 ## Prerequisites
 
-- Create an API key for Groq [here](https://console.groq.com/)
-- Install Docker
-- Install [uv]()
+- Install [pnpm](https://pnpm.io/)
 - Install the [AWS Cloud Development Kit (CDK)](https://docs.aws.amazon.com/cdk/v2/guide/home.html)
 - Setup security credentials for CDK, e.g. by installing [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and running `aws login`
-- Navigate to the `backend/app` directory and export the dependencies to `requirements.txt` with
+- Navigate to the `frontend/app` directory and export the application to a static website with
 
   ```bash
   cd ../app
-  uv sync
-  uv export -o requirements.txt --no-dev
+  pnpm install
+  pnpm build
   ```
 
 ## Install dependencies
@@ -22,7 +20,7 @@ This document outlines the steps to deploy the backend to AWS.
 Install dependencies with:
 
 ```bash
-uv sync
+pnpm install
 ```
 
 ## Deployment
@@ -30,7 +28,5 @@ uv sync
 Deploy to an AWS account with:
 
 ```bash
-cdk deploy
+pnpm exec cdk deploy
 ```
-
-Navigate to Secret Manager in the AWS console and set the value of the secret GroqApiKeySecret to the API you created earlier.

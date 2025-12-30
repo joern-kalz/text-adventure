@@ -59,7 +59,7 @@ Open your browser and visit [http://localhost:3000/](http://localhost:3000/).
 Deploy the game to an AWS account with
 
 - [Steps for backend deployment](backend/infra/README.md)
-- Steps for frontend deployment
+- [Steps for frontend deployment](frontend/infra/README.md)
 
 
 ## 📄 License
